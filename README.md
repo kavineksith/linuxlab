@@ -1,6 +1,6 @@
 # linuxlab
 
-[![CI](https://github.com/YOUR-USERNAME/linuxlab/actions/workflows/ci.yml/badge.svg)](https://github.com/YOUR-USERNAME/linuxlab/actions/workflows/ci.yml)
+[![CI](https://github.com/kavineksith/linuxlab/actions/workflows/ci.yml/badge.svg)](https://github.com/kavineksith/linuxlab/actions/workflows/ci.yml)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](./LICENSE)
 ![Tasks](https://img.shields.io/badge/tasks-43-blue)
 ![Bash](https://img.shields.io/badge/shell-bash-4EAA25?logo=gnubash&logoColor=white)
@@ -9,9 +9,6 @@ A hands-on Linux practice lab: realistic scenario tasks, an automated
 `lab check` grader, progressive hints, and progress tracking — usable
 either as a **container** (Podman or Docker) or installed **natively**
 on a Debian-based host (Debian, Ubuntu, Linux Mint).
-
-> Replace `YOUR-USERNAME` in the badge URLs above with your actual
-> GitHub username/org once you've pushed the repo.
 
 - [What this is](#what-this-is)
 - [Curriculum & learning path](#curriculum--learning-path)
@@ -43,8 +40,8 @@ New to this project? Start with [`CURRICULUM.md`](./CURRICULUM.md) — it
 lays out a recommended order through all 43 tasks, explains what each
 category is actually used for on the job, and maps it to real IT career
 tracks (sysadmin, DevOps/SRE, security, cloud). This README covers
-installing and running the lab; CURRICULUM.md covers *why* and *in
-what order*.
+installing and running the lab; CURRICULUM.md covers _why_ and _in
+what order_.
 
 ## Disclaimer
 
@@ -83,13 +80,9 @@ A few things worth knowing before you use it:
 Clone the repository with git:
 
 ```bash
-git clone https://github.com/<your-username>/linuxlab.git
+git clone https://github.com/kavineksith/linuxlab.git
 cd linuxlab
 ```
-
-(Replace `<your-username>/linuxlab` with wherever you've hosted this
-repo. If you just have the zip, `unzip linuxlab.zip && cd linuxlab`
-works the same way.)
 
 No `git`? Install it first:
 
@@ -270,19 +263,19 @@ isn't set up, so `lab list` is your friend for finding exact IDs.
 "why this matters for your career" case for each area, and which real
 IT job roles lean on which skills.
 
-| # | Category | Tasks | Focus |
-|---|---|---|---|
-| 01 | `fundamentals` | 6 | permissions, processes, find, sed, tar/gzip, shell scripting |
-| 02 | `sysadmin` | 6 | users/groups, log analysis, apt, systemd basics, disk usage, service troubleshooting |
-| 03 | `security` | 6 | cron, sudoers, SSH hardening, ufw firewall, file integrity, password aging |
-| 04 | `networking` | 4 | IP addressing, DNS, port identification, SSH key auth |
-| 05 | `storage` | 3 | log cleanup by age, logrotate, backup scripting |
-| 06 | `storage-lvm` | 4 | loop devices, LVM (PV/VG/LV), online resize, fstab persistence |
-| 07 | `systemd-deep` | 4 | timers (cron replacement), resource limits (cgroups), unit dependencies, journalctl triage |
-| 08 | `security-mac` | 3 | AppArmor enforce mode, writing AppArmor profiles, auditd file watches |
-| 09 | `backups-recovery` | 3 | rsync mirroring, restore + checksum verification, automated backup timers |
-| 10 | `containers` | 3 | run/inspect, build a custom image, container-to-container networking |
-| 11 | `capstone` | 1 | multi-skill "sick server" triage combining process, permissions, and disk skills |
+| #   | Category           | Tasks | Focus                                                                                      |
+| --- | ------------------ | ----- | ------------------------------------------------------------------------------------------ |
+| 01  | `fundamentals`     | 6     | permissions, processes, find, sed, tar/gzip, shell scripting                               |
+| 02  | `sysadmin`         | 6     | users/groups, log analysis, apt, systemd basics, disk usage, service troubleshooting       |
+| 03  | `security`         | 6     | cron, sudoers, SSH hardening, ufw firewall, file integrity, password aging                 |
+| 04  | `networking`       | 4     | IP addressing, DNS, port identification, SSH key auth                                      |
+| 05  | `storage`          | 3     | log cleanup by age, logrotate, backup scripting                                            |
+| 06  | `storage-lvm`      | 4     | loop devices, LVM (PV/VG/LV), online resize, fstab persistence                             |
+| 07  | `systemd-deep`     | 4     | timers (cron replacement), resource limits (cgroups), unit dependencies, journalctl triage |
+| 08  | `security-mac`     | 3     | AppArmor enforce mode, writing AppArmor profiles, auditd file watches                      |
+| 09  | `backups-recovery` | 3     | rsync mirroring, restore + checksum verification, automated backup timers                  |
+| 10  | `containers`       | 3     | run/inspect, build a custom image, container-to-container networking                       |
+| 11  | `capstone`         | 1     | multi-skill "sick server" triage combining process, permissions, and disk skills           |
 
 Each task is self-contained: a scenario, an objective, an automated
 checker, and 2-4 progressive hints (vague → exact command).
@@ -301,7 +294,7 @@ Copy `tasks/_template/000-template/` into `tasks/<NN-category>/<NNN-slug>/`
 and fill in the four files:
 
 - **meta.sh** — title, category, difficulty, environment, description, objective
-- **setup.sh** *(optional)* — creates the starting "broken" state
+- **setup.sh** _(optional)_ — creates the starting "broken" state
 - **check.sh** — validates the learner's work; exit 0 = pass
 - **hints.txt** — one hint per line, revealed progressively
 
