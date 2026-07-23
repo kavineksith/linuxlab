@@ -1,0 +1,15 @@
+# Learner-local state — never commit progress or scratch workspaces
+.local/share/linuxlab/
+linuxlab-workspace/
+
+# Editor/OS cruft
+.DS_Store
+*.swp
+*~
+
+# Container build artifacts
+*.tar
+
+# Common accidental commits
+*.log
+.env

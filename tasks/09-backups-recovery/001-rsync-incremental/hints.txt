@@ -1,0 +1,5 @@
+rsync's -a flag ('archive') preserves permissions, timestamps, and recurses into subdirectories — the standard baseline for backups.
+By default rsync only ADDS/updates files — it won't remove files from the destination that were deleted from the source.
+The --delete flag makes it a true mirror by removing destination files that no longer exist at the source.
+Full solution: rsync -a --delete source/ mirror/
+(Note the trailing slash on source/ — it means 'copy the CONTENTS of source', not 'create a source subfolder inside mirror'.)

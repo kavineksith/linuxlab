@@ -1,0 +1,4 @@
+The 'ip addr add' subcommand attaches an additional address to an interface without disturbing the existing one.
+Syntax: sudo ip addr add <address>/<prefix> dev <interface>
+The loopback interface is almost always named 'lo'.
+Full solution: sudo ip addr add 192.168.77.10/24 dev lo

@@ -1,0 +1,14 @@
+Create the unit file with: sudo nano /etc/systemd/system/labdemo.service (or vim/visudo-style editor of your choice).
+A minimal unit has [Unit], [Service], and [Install] sections. After creating/editing it, tell systemd to reread units with: sudo systemctl daemon-reload
+Enable it to start on boot and start it now with: sudo systemctl enable --now labdemo
+Full unit file:
+  [Unit]
+  Description=Lab demo background service
+
+  [Service]
+  ExecStart=/usr/bin/sleep infinity
+  Restart=on-failure
+
+  [Install]
+  WantedBy=multi-user.target
+Then: sudo systemctl daemon-reload && sudo systemctl enable --now labdemo

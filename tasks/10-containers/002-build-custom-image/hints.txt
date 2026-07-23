@@ -1,0 +1,16 @@
+A minimal Dockerfile has a FROM line, then COPY to bring files in, then ENTRYPOINT to define what runs.
+Remember RUN chmod +x on the copied script — files don't keep their host executable bit automatically in every case.
+Build with: docker build -t labapp:1.0 . (the trailing dot means 'use the current directory as build context').
+Full solution:
+  # Dockerfile
+  FROM alpine:latest
+  COPY greet.sh /usr/local/bin/greet.sh
+  RUN chmod +x /usr/local/bin/greet.sh
+  ENTRYPOINT ["/usr/local/bin/greet.sh"]
+
+  # greet.sh
+  #!/bin/sh
+  echo "Hello from the lab container"
+
+  docker build -t labapp:1.0 .
+  docker run --rm labapp:1.0

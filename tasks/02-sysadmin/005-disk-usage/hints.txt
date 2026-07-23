@@ -1,0 +1,4 @@
+'du -a data | sort -rn | head' will list files and directories sorted by size, largest first.
+For files only (skip directory subtotals), 'find data -type f -printf "%s %p\n" | sort -rn | head' is cleaner.
+Once you've identified it, write just the path (e.g. data/uploads/2024/dump.sql) into answer.txt.
+Full solution: find data -type f -printf '%s %p\n' | sort -rn | head -n1 | awk '{print $2}' > answer.txt

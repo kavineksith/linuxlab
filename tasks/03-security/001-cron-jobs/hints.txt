@@ -1,0 +1,4 @@
+Edit your personal crontab with: crontab -e
+Cron time fields are: minute hour day-of-month month day-of-week. 2:30 AM daily is: 30 2 * * *
+The full line to add is: 30 2 * * * find /tmp/labcleanup -type f -mtime +7 -delete
+Full solution: run 'crontab -e', add the line '30 2 * * * find /tmp/labcleanup -type f -mtime +7 -delete', save and exit.

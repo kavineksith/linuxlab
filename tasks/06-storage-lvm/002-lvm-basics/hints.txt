@@ -1,0 +1,9 @@
+Check 'sudo losetup -a' to confirm which /dev/loopN devices exist before you start.
+The LVM stack builds bottom-up: pvcreate on each disk, then vgcreate combining them, then lvcreate carving out a chunk.
+Try: sudo pvcreate /dev/loop20 /dev/loop21 && sudo vgcreate labvg /dev/loop20 /dev/loop21 && sudo lvcreate -L 50M -n datalv labvg
+Full solution:
+  sudo pvcreate /dev/loop20 /dev/loop21
+  sudo vgcreate labvg /dev/loop20 /dev/loop21
+  sudo lvcreate -L 50M -n datalv labvg
+  sudo mkfs.ext4 /dev/labvg/datalv
+  sudo mount /dev/labvg/datalv /mnt/labdata

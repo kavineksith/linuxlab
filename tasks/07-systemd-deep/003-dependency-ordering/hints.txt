@@ -1,0 +1,17 @@
+After= controls ORDER (start after); Requires= controls DEPENDENCY (start it too, and stop if it fails). You typically want both together.
+Both directives go in the dependent unit's [Unit] section — labfrontend depends on labbackend, so they go in labfrontend.service.
+Because of Requires=, starting labfrontend will automatically pull in labbackend — you don't need to start it separately.
+Full solution:
+  # labbackend.service
+  [Service]
+  ExecStart=/usr/bin/sleep infinity
+
+  # labfrontend.service
+  [Unit]
+  After=labbackend.service
+  Requires=labbackend.service
+  [Service]
+  ExecStart=/usr/bin/sleep infinity
+
+  sudo systemctl daemon-reload
+  sudo systemctl enable --now labfrontend labbackend

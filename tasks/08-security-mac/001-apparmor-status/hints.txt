@@ -1,0 +1,4 @@
+aa-status (or 'sudo apparmor_status') gives a full picture: enabled/disabled, and which profiles are in enforce vs complain mode.
+Complain mode profiles are logged but not blocked — they're a testing phase before going live.
+The command to promote a profile is: sudo aa-enforce <path-to-binary>
+Full solution: sudo aa-enforce /usr/sbin/labguard && sudo aa-status

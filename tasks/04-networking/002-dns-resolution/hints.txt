@@ -1,0 +1,4 @@
+/etc/hosts is a simple text file: one IP address followed by one or more hostnames, per line.
+You'll need root privileges to edit it. Appending is safe and won't disturb existing entries.
+Try: echo '127.0.0.1 lab.internal' | sudo tee -a /etc/hosts
+Full solution: echo '127.0.0.1 lab.internal' | sudo tee -a /etc/hosts && getent hosts lab.internal

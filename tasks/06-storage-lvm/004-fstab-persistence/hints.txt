@@ -1,0 +1,5 @@
+Find the UUID of the mounted filesystem with: sudo blkid /dev/loopN (or findmnt -o UUID /mnt/labdisk on newer systems)
+/etc/fstab lines have 6 space-separated fields: device(or UUID=...) mountpoint fstype options dump pass
+Edit the file with sudo (e.g. sudo nano /etc/fstab) and add a new line — never delete existing entries.
+Full fstab line: UUID=<the-uuid> /mnt/labdisk ext4 defaults 0 2
+Then verify with: sudo mount -a

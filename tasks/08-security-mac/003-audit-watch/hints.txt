@@ -1,0 +1,7 @@
+auditctl -w <path> sets a watch on a specific file or directory.
+-p specifies which access types to log: r=read, w=write, x=execute, a=attribute change. You need both w and a here.
+-k tags the rule with a searchable keyword so you can find its events later with ausearch -k <keyword>.
+Full solution:
+  sudo auditctl -w /etc/lab/secrets.conf -p wa -k lab-secrets-watch
+  echo test | sudo tee -a /etc/lab/secrets.conf
+  sudo ausearch -k lab-secrets-watch

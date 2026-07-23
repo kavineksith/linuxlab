@@ -1,0 +1,4 @@
+Start by filtering just the failed attempts: grep 'Failed password' auth.log
+Extract the IP addresses from those lines with grep -oE and a regex like '([0-9]{1,3}\.){3}[0-9]{1,3}'
+Count occurrences of each IP with 'sort | uniq -c | sort -rn' — the top of that list is your answer.
+Full solution: grep 'Failed password' auth.log | grep -oE '([0-9]{1,3}\.){3}[0-9]{1,3}' | sort | uniq -c | sort -rn | head -n1 | awk '{print $2}' > answer.txt

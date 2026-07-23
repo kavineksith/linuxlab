@@ -1,0 +1,4 @@
+Extending the logical volume itself is one command: sudo lvextend -L +20M /dev/labvg/datalv
+Growing the LV doesn't automatically grow the filesystem sitting on it — that's a separate step.
+For ext4, resize2fs can grow the filesystem while it's still mounted (online resize): sudo resize2fs /dev/labvg/datalv
+Full solution: sudo lvextend -L +20M /dev/labvg/datalv && sudo resize2fs /dev/labvg/datalv

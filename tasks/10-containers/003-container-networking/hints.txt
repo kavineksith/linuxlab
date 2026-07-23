@@ -1,0 +1,8 @@
+Create the network first, since containers attach to it when they start: docker network create labnet
+Attach a container to a specific network at run time with --network: docker run -d --name labdb --network labnet alpine sleep infinity
+User-defined bridge networks (unlike the default bridge) give containers automatic DNS resolution of each other's names — that's the whole point here.
+Full solution:
+  docker network create labnet
+  docker run -d --name labdb --network labnet alpine sleep infinity
+  docker run -d --name labapi --network labnet alpine sleep infinity
+  docker exec labapi ping -c 1 labdb

@@ -1,0 +1,4 @@
+MemoryMax and CPUQuota both go inside the [Service] section, one directive per line, same as ExecStart.
+Editing the unit file alone isn't enough — systemd needs to reread it: sudo systemctl daemon-reload
+Limits only take effect on the running unit after a restart: sudo systemctl restart labdemo
+Verify what systemd actually applied (not just what's in the file) with: systemctl show labdemo -p MemoryMax -p CPUQuotaPerSecUSec

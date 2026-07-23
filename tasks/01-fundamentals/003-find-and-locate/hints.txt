@@ -1,0 +1,4 @@
+The find command searches recursively by default: find . -name 'filename'
+You're looking for an exact filename match, not a partial one — that rules out config.prod.yml.bak.
+Try: find . -name 'config.prod.yml'
+Full solution: find . -name 'config.prod.yml' -not -path '*/archive/*' > answer.txt

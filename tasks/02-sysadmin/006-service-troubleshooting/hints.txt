@@ -1,0 +1,4 @@
+Start with: sudo systemctl status webapp.service — it usually names the exact failure.
+For more detail on why a process failed to launch, check: sudo journalctl -u webapp.service -n 50 --no-pager
+Compare the ExecStart path in /etc/systemd/system/webapp.service against what actually exists in /usr/local/bin/ with 'ls /usr/local/bin/'.
+Full fix: sudo sed -i 's#/usr/local/bin/webapp-serverr.sh#/usr/local/bin/webapp-server.sh#' /etc/systemd/system/webapp.service && sudo systemctl daemon-reload && sudo systemctl restart webapp

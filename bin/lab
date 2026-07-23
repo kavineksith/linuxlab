@@ -1,0 +1,208 @@
+#!/usr/bin/env bash
+# lab — CLI for the linuxlab hands-on practice environment
+set -euo pipefail
+
+SELF_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+LAB_ROOT="$(cd "$SELF_DIR/.." && pwd)"
+export LAB_ROOT
+# shellcheck disable=SC1090
+source "$LAB_ROOT/lib/lab-core.sh"
+# shellcheck disable=SC1090
+source "$LAB_ROOT/lib/lab-doctor.sh"
+
+usage() {
+cat <<EOF
+${C_BOLD}linuxlab${C_RESET} — hands-on Linux practice CLI
+
+Usage:
+  lab list [category]          List all tasks, optionally filtered by category
+  lab show <task-id>           Show full task description and objective
+  lab start <task-id>          Set up the task's starting scenario
+  lab check <task-id>          Validate your work against the task's checks
+  lab hint <task-id>           Reveal the next hint for a task
+  lab reset <task-id|--all>    Reset task progress (and re-run setup)
+  lab progress                 Show overall progress summary
+  lab next                     Suggest the next incomplete task
+  lab doctor                   Check this environment's prerequisites
+
+Examples:
+  lab list
+  lab doctor
+  lab show 01-fundamentals/001-file-permissions
+  lab start 01-fundamentals/001-file-permissions
+  lab check 01-fundamentals/001-file-permissions
+EOF
+}
+
+cmd_list() {
+  local filter="${1:-}"
+  head1 "Available tasks"
+  printf '%-38s %-12s %-10s %-6s\n' "ID" "CATEGORY" "LEVEL" "STATUS"
+  printf '%-38s %-12s %-10s %-6s\n' "--" "--------" "-----" "------"
+  while read -r id; do
+    [ -n "$filter" ] && [[ "$id" != "$filter"* ]] && continue
+    load_task_meta "$id"
+    local st; st="$(progress_status "$id")"
+    local mark="$C_DIM.$C_RESET"
+    [ "$st" = "started" ] && mark="${C_YELLOW}~${C_RESET}"
+    [ "$st" = "done" ] && mark="${C_GREEN}✔${C_RESET}"
+    printf '%-38s %-12s %-10s %s\n' "$id" "$CATEGORY" "$DIFFICULTY" "$mark"
+  done < <(list_task_ids)
+  echo
+  echo "Legend: . not started   ~ started   ✔ complete"
+}
+
+cmd_show() {
+  local id="$1"
+  task_exists "$id" || { fail "Unknown task: $id"; exit 1; }
+  load_task_meta "$id"
+  head1 "$TITLE"
+  echo "${C_DIM}id: $id   category: $CATEGORY   difficulty: $DIFFICULTY   env: $ENVIRON${C_RESET}"
+  echo
+  echo "$DESCRIPTION"
+  echo
+  echo "${C_BOLD}Objective:${C_RESET}"
+  echo "$OBJECTIVE"
+  echo
+  if in_container && [ "$ENVIRON" = "native" ]; then
+    warn "This task targets a real host (systemd/LVM/AppArmor/auditd/network/firewall) and may not fully work in this container."
+    echo "  Run 'lab doctor' to see exactly what's missing in this environment."
+  fi
+}
+
+cmd_start() {
+  local id="$1"
+  task_exists "$id" || { fail "Unknown task: $id"; exit 1; }
+  load_task_meta "$id"
+  local dir; dir="$(task_dir "$id")"
+  local wd="$LAB_WORKDIR/$id"
+  mkdir -p "$wd"
+  if [ -x "$dir/setup.sh" ]; then
+    info "Setting up scenario for $id ..."
+    ( cd "$wd" && "$dir/setup.sh" )
+  else
+    info "No setup script for this task — nothing to initialize."
+  fi
+  progress_set "$id" "started"
+  ok "Task started. Workspace: $wd"
+  echo
+  echo "Run '${C_BOLD}lab show $id${C_RESET}' to re-read the objective."
+  echo "Run '${C_BOLD}lab check $id${C_RESET}' once you think you're done."
+}
+
+cmd_check() {
+  local id="$1"
+  task_exists "$id" || { fail "Unknown task: $id"; exit 1; }
+  load_task_meta "$id"
+  local dir; dir="$(task_dir "$id")"
+  local wd="$LAB_WORKDIR/$id"
+  mkdir -p "$wd"
+  if [ ! -x "$dir/check.sh" ]; then
+    fail "This task has no automated check yet."
+    exit 1
+  fi
+  info "Checking $id ..."
+  if ( cd "$wd" && "$dir/check.sh" ); then
+    ok "Task complete: $TITLE"
+    progress_set "$id" "done"
+  else
+    fail "Not there yet — output above explains what's missing."
+    warn "Try 'lab hint $id' if you're stuck."
+    progress_set "$id" "started"
+    exit 1
+  fi
+}
+
+cmd_hint() {
+  local id="$1"
+  task_exists "$id" || { fail "Unknown task: $id"; exit 1; }
+  local dir; dir="$(task_dir "$id")"
+  if [ ! -f "$dir/hints.txt" ]; then
+    warn "No hints available for this task."
+    return
+  fi
+  local total level
+  total=$(grep -cve '^\s*$' "$dir/hints.txt")
+  level=$(progress_hint_level "$id")
+  level=$((level + 1))
+  if [ "$level" -gt "$total" ]; then
+    warn "No more hints — you've seen all $total."
+    level=$total
+  fi
+  local text
+  text=$(grep -ve '^\s*$' "$dir/hints.txt" | sed -n "${level}p")
+  head1 "Hint $level/$total"
+  echo "$text"
+  progress_set "$id" "$(progress_status "$id")" "$level"
+}
+
+cmd_reset() {
+  local id="$1"
+  if [ "$id" = "--all" ]; then
+    read -r -p "Reset ALL progress? [y/N] " ans
+    [ "$ans" = "y" ] || [ "$ans" = "Y" ] || { echo "Cancelled."; exit 0; }
+    : > "$LAB_PROGRESS_FILE"
+    rm -rf "${LAB_WORKDIR:?}"/*
+    ok "All progress reset."
+    return
+  fi
+  task_exists "$id" || { fail "Unknown task: $id"; exit 1; }
+  progress_reset "$id"
+  rm -rf "${LAB_WORKDIR:?}/$id"
+  ok "Progress reset for $id. Run 'lab start $id' to begin again."
+}
+
+cmd_progress() {
+  local total=0 done=0 started=0
+  while read -r id; do
+    total=$((total+1))
+    case "$(progress_status "$id")" in
+      done) done=$((done+1)) ;;
+      started) started=$((started+1)) ;;
+    esac
+  done < <(list_task_ids)
+  head1 "Progress summary"
+  echo "Completed : $done / $total"
+  echo "In progress: $started"
+  local pct=0
+  [ "$total" -gt 0 ] && pct=$(( done * 100 / total ))
+  local bar_len=30
+  local filled=$(( pct * bar_len / 100 ))
+  printf '['
+  for ((i=0;i<filled;i++)); do printf '#'; done
+  for ((i=filled;i<bar_len;i++)); do printf '.'; done
+  printf '] %s%%\n' "$pct"
+}
+
+cmd_next() {
+  while read -r id; do
+    st="$(progress_status "$id")"
+    if [ "$st" != "done" ]; then
+      info "Next up: $id"
+      cmd_show "$id"
+      return
+    fi
+  done < <(list_task_ids)
+  ok "All tasks completed! 🎉"
+}
+
+main() {
+  local sub="${1:-}"
+  [ -z "$sub" ] && { usage; exit 0; }
+  shift || true
+  case "$sub" in
+    list) cmd_list "${1:-}" ;;
+    show) [ $# -ge 1 ] || { fail "Usage: lab show <task-id>"; exit 1; }; cmd_show "$1" ;;
+    start) [ $# -ge 1 ] || { fail "Usage: lab start <task-id>"; exit 1; }; cmd_start "$1" ;;
+    check) [ $# -ge 1 ] || { fail "Usage: lab check <task-id>"; exit 1; }; cmd_check "$1" ;;
+    hint) [ $# -ge 1 ] || { fail "Usage: lab hint <task-id>"; exit 1; }; cmd_hint "$1" ;;
+    reset) [ $# -ge 1 ] || { fail "Usage: lab reset <task-id|--all>"; exit 1; }; cmd_reset "$1" ;;
+    progress) cmd_progress ;;
+    next) cmd_next ;;
+    doctor) run_doctor ;;
+    -h|--help|help) usage ;;
+    *) fail "Unknown command: $sub"; usage; exit 1 ;;
+  esac
+}
+
+main "$@"

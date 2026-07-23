@@ -1,0 +1,4 @@
+Create a user with a home directory using useradd's -m flag: sudo useradd -m devuser
+Create a new group with: sudo groupadd developers
+Add an existing user to extra groups (without removing existing ones) using usermod -aG: sudo usermod -aG sudo,developers devuser
+Full solution: sudo useradd -m devuser && sudo groupadd developers && sudo usermod -aG sudo,developers devuser

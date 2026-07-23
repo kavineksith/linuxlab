@@ -1,0 +1,63 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install shellcheck
+        run: sudo apt-get update && sudo apt-get install -y shellcheck
+
+      - name: Syntax-check every shell script (bash -n)
+        run: |
+          set -e
+          fail=0
+          while IFS= read -r f; do
+            if ! bash -n "$f"; then
+              echo "::error file=$f::bash -n syntax check failed"
+              fail=1
+            fi
+          done < <(find . -path './.git' -prune -o \( -name '*.sh' -o -path './bin/lab' \) -type f -print)
+          exit $fail
+
+      - name: shellcheck (warnings only, non-blocking)
+        run: |
+          find . -path './.git' -prune -o \( -name '*.sh' -o -path './bin/lab' \) -type f -print | \
+            xargs shellcheck --severity=error --external-sources || true
+
+      - name: Verify every task has required files
+        run: |
+          set -e
+          fail=0
+          while IFS= read -r meta; do
+            dir="$(dirname "$meta")"
+            id="${dir#./tasks/}"
+            [ -f "$dir/check.sh" ] || { echo "::error::$id missing check.sh"; fail=1; }
+            [ -x "$dir/check.sh" ] || { echo "::error::$id check.sh not executable"; fail=1; }
+            [ -f "$dir/hints.txt" ] || { echo "::error::$id missing hints.txt"; fail=1; }
+            for field in TITLE CATEGORY DIFFICULTY ENVIRON DESCRIPTION OBJECTIVE; do
+              grep -q "^$field=" "$meta" || { echo "::error::$id meta.sh missing $field"; fail=1; }
+            done
+          done < <(find ./tasks -mindepth 3 -maxdepth 3 -name meta.sh | grep -v _template)
+          exit $fail
+
+      - name: Run lab CLI smoke test (container-safe tasks only)
+        run: |
+          export LAB_ROOT="$PWD"
+          export HOME="$RUNNER_TEMP/home"
+          mkdir -p "$HOME"
+          chmod +x bin/lab
+          find tasks -name 'setup.sh' -o -name 'check.sh' | xargs chmod +x
+          ./bin/lab list
+          ./bin/lab doctor || true
+          ./bin/lab progress
+
+      - name: Build the container image
+        run: docker build -t linuxlab -f Containerfile .

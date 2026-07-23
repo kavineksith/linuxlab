@@ -1,0 +1,9 @@
+Set default policies first: sudo ufw default deny incoming && sudo ufw default allow outgoing
+Allow a specific port with: sudo ufw allow 22/tcp
+ufw rules are staged until you enable the firewall: sudo ufw enable (it may warn about disrupting existing SSH sessions — that's expected in a lab).
+Full solution:
+  sudo ufw default deny incoming
+  sudo ufw default allow outgoing
+  sudo ufw allow 22/tcp
+  sudo ufw allow 8080/tcp
+  sudo ufw --force enable

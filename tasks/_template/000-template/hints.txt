@@ -1,0 +1,3 @@
+First hint: nudge toward the right command/concept without giving the answer.
+Second hint: narrow it down further, maybe name the exact flag or file.
+Third hint / full solution: the exact command(s) that solve the task.

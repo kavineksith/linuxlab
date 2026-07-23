@@ -1,0 +1,5 @@
+The run subcommand's shape is the same across both tools: <tool> run -d --name <name> -p <hostport>:<containerport> <image>
+-d detaches so the container runs in the background instead of tying up your terminal.
+After it's running, '<tool> ps' shows running containers, and 'curl localhost:8081' tests the port mapping from the host side.
+Full solution: docker run -d --name labweb -p 8081:80 nginx:alpine
+(or: podman run -d --name labweb -p 8081:80 nginx:alpine)

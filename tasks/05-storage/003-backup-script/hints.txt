@@ -1,0 +1,11 @@
+Positional arguments in bash are $1 and $2 — use them for source_dir and dest_dir.
+Generate a sortable timestamp with: date +%Y%m%d-%H%M%S
+Build the tar command with the destination path and timestamp interpolated, e.g. tar -czf "$2/backup-$(date +%Y%m%d-%H%M%S).tar.gz" -C "$1" .
+Full solution (backup.sh):
+  #!/usr/bin/env bash
+  set -euo pipefail
+  src="$1"
+  dest="$2"
+  ts="$(date +%Y%m%d-%H%M%S)"
+  tar -czf "$dest/backup-$ts.tar.gz" -C "$src" .
+Then: chmod +x backup.sh

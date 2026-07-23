@@ -1,0 +1,4 @@
+Permissions in Linux are three digits: owner, group, others. 640 means owner=rw(6), group=r(4), others=none(0).
+The command to change permission bits is chmod. Numeric mode: chmod 640 secrets.txt
+The command to change group ownership is chgrp. Try: chgrp labgroup secrets.txt
+Full solution: chmod 640 secrets.txt && chgrp labgroup secrets.txt

@@ -1,0 +1,4 @@
+tar's flags: c=create, z=gzip compress, f=filename, v=verbose (optional). Order matters after the dash: czf.
+Point tar at the directory, not its individual files, so the whole structure is preserved.
+Try: tar -czf release.tar.gz release
+Full solution: tar -czf release.tar.gz release

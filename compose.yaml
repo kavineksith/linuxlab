@@ -1,0 +1,25 @@
+# Works with both `docker compose` and `podman compose` (or the
+# standalone `podman-compose` tool). See README.md for install
+# instructions if you don't have either yet.
+#
+# Usage:
+#   docker compose run --rm linuxlab
+#   podman compose run --rm linuxlab
+#
+# For a long-lived container instead of a one-shot session:
+#   docker compose up -d
+#   docker compose exec linuxlab bash -l
+
+services:
+  linuxlab:
+    build:
+      context: .
+      dockerfile: Containerfile
+    image: linuxlab
+    stdin_open: true
+    tty: true
+    volumes:
+      - linuxlab-home:/home/labuser
+
+volumes:
+  linuxlab-home:

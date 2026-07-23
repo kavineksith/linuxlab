@@ -1,0 +1,7 @@
+Start the script with a shebang line: #!/usr/bin/env bash
+Count regular files in the current directory only (not subdirectories) with: find . -maxdepth 1 -type f | wc -l
+Remember to make the script executable: chmod +x count_files.sh
+Full solution (count_files.sh):
+  #!/usr/bin/env bash
+  n=$(find . -maxdepth 1 -type f ! -name 'count_files.sh' ! -name 'answer.txt' | wc -l)
+  echo "File count: $n"

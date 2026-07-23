@@ -1,0 +1,4 @@
+sed's basic substitution syntax is: sed 's/old/new/' file — add -i to edit the file in place.
+You need two separate substitutions; you can chain them with -e or run sed twice.
+Try: sed -i 's/debug=true/debug=false/' server.conf
+Full solution: sed -i -e 's/debug=true/debug=false/' -e 's/port=8000/port=8443/' server.conf

@@ -1,0 +1,4 @@
+Never edit /etc/sudoers directly — use drop-in files in /etc/sudoers.d/ instead, and always validate with visudo.
+Create the file safely with: sudo visudo -f /etc/sudoers.d/deploy-nginx
+The sudoers line format is: user ALL=(ALL) NOPASSWD: /full/path/to/command
+Use the full path to the binary (find it with 'which systemctl'). Full solution line: deploy ALL=(ALL) NOPASSWD: /usr/bin/systemctl restart nginx

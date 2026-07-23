@@ -1,0 +1,4 @@
+'ss -ltn' lists all TCP sockets in Listen state, numerically (no DNS lookups) — much faster than netstat.
+The Local Address:Port column shows something like 127.0.0.1:9042 — you want just the port number after the colon.
+Filter for the range with awk, or just eyeball the single 4-digit port starting with 90.
+Full solution: ss -ltn | awk '{print $4}' | grep -oE '[0-9]+$' | awk '$1>=9000 && $1<=9100' > answer.txt

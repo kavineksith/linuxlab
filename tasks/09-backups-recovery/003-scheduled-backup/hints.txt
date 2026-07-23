@@ -1,0 +1,9 @@
+Start with the script itself and test it manually before wiring up systemd: bash /usr/local/bin/lab-nightly-backup.sh should just work.
+OnCalendar=*-*-* 02:00:00 means every day at 2 AM — the '*-*-*' part is the date wildcard, the time follows.
+Just like the earlier timer task: enable/start the .timer, not the .service — but you CAN start the .service directly to test it once.
+Full script (/usr/local/bin/lab-nightly-backup.sh):
+  #!/usr/bin/env bash
+  set -euo pipefail
+  mkdir -p /var/backups
+  tar -czf "/var/backups/labdata-$(date +%Y%m%d).tar.gz" -C /var/lab/data .
+Then chmod +x it, write the .service (ExecStart=/usr/local/bin/lab-nightly-backup.sh) and .timer units, daemon-reload, enable --now the timer, and 'systemctl start lab-nightly-backup.service' once to test.

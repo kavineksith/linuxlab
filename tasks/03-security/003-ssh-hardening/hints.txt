@@ -1,0 +1,4 @@
+Edit the file with root privileges: sudo nano /etc/ssh/sshd_config (or your preferred editor).
+Look for existing (possibly commented-out with '#') PermitRootLogin and PasswordAuthentication lines and set both to 'no', uncommenting if necessary.
+Always validate sshd config syntax before restarting the service: sudo sshd -t
+Full solution: sudo sed -i -E 's/^#?PermitRootLogin.*/PermitRootLogin no/; s/^#?PasswordAuthentication.*/PasswordAuthentication no/' /etc/ssh/sshd_config && sudo sshd -t

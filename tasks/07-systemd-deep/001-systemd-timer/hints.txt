@@ -1,0 +1,22 @@
+A timer unit always pairs with a same-named service unit unless you point it elsewhere with Unit=.
+The service should be Type=oneshot since it just runs once and exits, not a long-running daemon.
+You enable/start the .timer, never the .service directly — the timer triggers the service on schedule.
+Full solution:
+  # /etc/systemd/system/labjob.service
+  [Unit]
+  Description=Lab scheduled job
+  [Service]
+  Type=oneshot
+  ExecStart=/bin/bash -c 'echo run >> /tmp/labjob.log'
+
+  # /etc/systemd/system/labjob.timer
+  [Unit]
+  Description=Run labjob daily
+  [Timer]
+  OnCalendar=daily
+  Persistent=true
+  [Install]
+  WantedBy=timers.target
+
+  sudo systemctl daemon-reload
+  sudo systemctl enable --now labjob.timer

@@ -1,0 +1,3 @@
+chage manages password aging for a user account. View current settings with: sudo chage -l tempuser
+Set all three values in one command using -M (max age), -m (min age), -W (warning days).
+Full solution: sudo chage -M 30 -m 1 -W 7 tempuser

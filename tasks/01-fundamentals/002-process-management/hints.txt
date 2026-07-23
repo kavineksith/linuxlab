@@ -1,0 +1,4 @@
+Use 'pgrep -f lab_runaway_proc' or 'ps aux | grep lab_runaway_proc' to find its PID.
+Once you have the PID, terminate it with 'kill <PID>'. That sends SIGTERM.
+You can do it in one step with pkill: 'pkill -f lab_runaway_proc'
+Full solution: pkill -f lab_runaway_proc

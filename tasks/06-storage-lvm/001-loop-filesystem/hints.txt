@@ -1,0 +1,9 @@
+Create a fixed-size file with fallocate (fast) or dd: fallocate -l 100M ~/labwork/disk.img
+Attach it as a loop device with: sudo losetup -fP ~/labwork/disk.img — use 'losetup -a' to see which /dev/loopN it got.
+Format the loop device (not the file!) with: sudo mkfs.ext4 /dev/loopN, then mount it: sudo mount /dev/loopN /mnt/labdisk
+Full solution:
+  fallocate -l 100M ~/labwork/disk.img
+  sudo losetup -fP ~/labwork/disk.img
+  DEV=$(losetup -j ~/labwork/disk.img | cut -d: -f1)
+  sudo mkfs.ext4 "$DEV"
+  sudo mount "$DEV" /mnt/labdisk

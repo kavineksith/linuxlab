@@ -1,0 +1,8 @@
+Extract a tar.gz into a specific target directory with tar's -C flag: mkdir restored && tar -xzf db_backup.tar.gz -C restored
+sha256sum -c reads a checksum manifest and reports OK/FAILED per file — run it from inside the directory containing the restored files.
+Since db_backup.sha256 has relative filenames, you'll need to point sha256sum at it correctly from inside restored/, e.g. with a relative or absolute path to the manifest.
+Full solution:
+  mkdir restored
+  tar -xzf db_backup.tar.gz -C restored
+  ( cd restored && sha256sum -c ../db_backup.sha256 )
+  echo VERIFIED > answer.txt

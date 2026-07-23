@@ -1,0 +1,11 @@
+logrotate configs in /etc/logrotate.d/ follow the pattern: <path> { <directives> }
+Common directives: weekly, rotate N, compress, missingok, notifempty — one per line inside the braces.
+Always dry-run new configs before trusting them: sudo logrotate -d /etc/logrotate.d/labapp
+Full config for /etc/logrotate.d/labapp:
+  /var/log/labapp.log {
+      weekly
+      rotate 4
+      compress
+      missingok
+      notifempty
+  }

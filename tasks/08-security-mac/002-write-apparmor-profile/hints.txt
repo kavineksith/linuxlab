@@ -1,0 +1,11 @@
+Profile filenames map the binary path with slashes replaced by dots: /usr/local/bin/labreader -> usr.local.bin.labreader
+Grant a directory tree read access with a rule like: /var/lab/data/** r,
+After writing the profile, load it with apparmor_parser -r, then put it in enforce mode with aa-enforce.
+Full solution — /etc/apparmor.d/usr.local.bin.labreader:
+  #include <tunables/global>
+  /usr/local/bin/labreader {
+    #include <abstractions/base>
+    /usr/local/bin/labreader mr,
+    /var/lab/data/** r,
+  }
+Then: sudo apparmor_parser -r /etc/apparmor.d/usr.local.bin.labreader && sudo aa-enforce /usr/local/bin/labreader

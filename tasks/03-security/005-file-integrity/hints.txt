@@ -1,0 +1,4 @@
+sha256sum can verify a whole manifest at once with the -c flag: sha256sum -c checksums.sha256
+Files that fail verification are marked 'FAILED' in the output instead of 'OK'.
+Run this from inside the release/ directory so the relative paths in the manifest resolve correctly.
+Full solution: cd release && sha256sum -c checksums.sha256 | grep FAILED

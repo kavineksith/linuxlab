@@ -1,0 +1,4 @@
+journalctl -u <unit> filters the journal to just that service's log lines.
+Add --no-pager for cleaner scripted/copyable output, and -n 50 to see the most recent entries.
+The service logs the same fatal line every time it restarts — look for the one that stands out as an actual error message.
+Full solution: journalctl -u labcrasher.service --no-pager -n 20 | grep FATAL

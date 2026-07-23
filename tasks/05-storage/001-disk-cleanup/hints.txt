@@ -1,0 +1,4 @@
+find's -mtime +N flag matches files modified MORE than N days ago — exactly what you want for 'older than 14 days'.
+find supports deleting matches directly with -delete, avoiding a separate rm step.
+Be careful to scope the find to old_logs/*.log only, not the directory itself.
+Full solution: find old_logs -name '*.log' -mtime +14 -delete
